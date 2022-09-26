@@ -1,0 +1,779 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<html
+  class="not-ready text-sm lg:text-base"
+  style="--bg: #fff"
+  lang="en-us"
+>
+  <head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+
+  
+  <title>Uniswap V1 Smart Contract Breakdown - 0x4nz0</title>
+
+  
+  <meta name="theme-color" />
+  
+  <meta name="description" content="On the one hand, you have an introduction to basic concepts and an overview of the Uniswap Protocol.
+And, on the other hand, you have a smart contract breakdown along with a graphical guide for understanding the main functions of the Uniswap Protocol. For example, how the price works and how the liquidity pools work.
+NOTE: The following article brings together all the notes that I have been collecting from various sources to understand how Uniswap works in its first version." />
+  <meta name="author" content="0x4nz0" />
+  
+
+  
+  
+  
+  
+  
+  
+  <link rel="preload stylesheet" as="style" href="https://0x4nz0.github.io/main.min.css" />
+
+  
+
+  
+  
+  
+    
+  
+  <link
+    rel="preload"
+    as="image"
+    href="https://0x4nz0.github.io/theme.png"
+  />
+
+  
+  
+  
+  <link rel="preload" as="image" href="https://avatars.githubusercontent.com/u/109072046?v=4" />
+  
+  
+
+  
+  <link rel="preload" as="image" href="https://0x4nz0.github.io/twitter.svg" />
+  
+  <link rel="preload" as="image" href="https://0x4nz0.github.io/github.svg" />
+  
+  <link rel="preload" as="image" href="https://0x4nz0.github.io/rss.svg" />
+  
+
+  
+  <link rel="icon" href="https://0x4nz0.github.io/favicon.ico" />
+  <link rel="apple-touch-icon" href="https://0x4nz0.github.io/apple-touch-icon.png" />
+
+  
+  <meta name="generator" content="Hugo 0.92.2" />
+
+  
+  
+
+  
+  
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.2/dist/katex.min.css" integrity="sha384-bYdxxUwYipFNohQlHt0bjN/LCpueqWz13HufFEV1SUatKs1cm4L6fFgCi1jT643X" crossorigin="anonymous">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.2/dist/katex.min.js" integrity="sha384-Qsn9KnoKISj6dI8g7p1HBlNpVx0I8p1SvlwOldgi3IorMle61nQy4zEahWYtljaz" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.2/dist/contrib/auto-render.min.js" integrity="sha384-+VBxd3r6XgURycqtZ117nYw44OOcIax56Z4dCRWbxyPt0Koah1uHoK0o4+/RRE05" crossorigin="anonymous" onload="renderMathInElement(document.body);"></script>
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+      renderMathInElement(document.body, {
+        
+        
+        delimiters: [
+            {left: '$$', right: '$$', display: true},
+            {left: '$', right: '$', display: false},
+            {left: '\\(', right: '\\)', display: false},
+            {left: '\\[', right: '\\]', display: true}
+        ],
+        
+        throwOnError : false
+      });
+  });
+</script>
+
+  
+  
+
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <meta property="og:title" content="Uniswap V1 Smart Contract Breakdown" />
+<meta property="og:description" content="On the one hand, you have an introduction to basic concepts and an overview of the Uniswap Protocol.
+And, on the other hand, you have a smart contract breakdown along with a graphical guide for understanding the main functions of the Uniswap Protocol. For example, how the price works and how the liquidity pools work.
+NOTE: The following article brings together all the notes that I have been collecting from various sources to understand how Uniswap works in its first version." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://0x4nz0.github.io/posts/uniswap-v1/" /><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2022-09-26T00:00:00+00:00" />
+<meta property="article:modified_time" content="2022-09-26T00:00:00+00:00" />
+
+
+  
+  <meta itemprop="name" content="Uniswap V1 Smart Contract Breakdown">
+<meta itemprop="description" content="On the one hand, you have an introduction to basic concepts and an overview of the Uniswap Protocol.
+And, on the other hand, you have a smart contract breakdown along with a graphical guide for understanding the main functions of the Uniswap Protocol. For example, how the price works and how the liquidity pools work.
+NOTE: The following article brings together all the notes that I have been collecting from various sources to understand how Uniswap works in its first version."><meta itemprop="datePublished" content="2022-09-26T00:00:00+00:00" />
+<meta itemprop="dateModified" content="2022-09-26T00:00:00+00:00" />
+<meta itemprop="wordCount" content="3052">
+<meta itemprop="keywords" content="" />
+  
+  <meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Uniswap V1 Smart Contract Breakdown"/>
+<meta name="twitter:description" content="On the one hand, you have an introduction to basic concepts and an overview of the Uniswap Protocol.
+And, on the other hand, you have a smart contract breakdown along with a graphical guide for understanding the main functions of the Uniswap Protocol. For example, how the price works and how the liquidity pools work.
+NOTE: The following article brings together all the notes that I have been collecting from various sources to understand how Uniswap works in its first version."/>
+
+  
+  
+</head>
+
+  <body class="text-black duration-200 ease-out dark:text-white">
+    <header class="mx-auto flex h-[5rem] max-w-3xl px-8 lg:justify-center">
+  <div class="relative z-50 mr-auto flex items-center">
+    <a class="-translate-x-[1px] -translate-y-0.5 text-3xl font-bold" href="https://0x4nz0.github.io"
+      >0x4nz0</a
+    >
+    <a
+      class="btn-dark ml-6 h-6 w-6 shrink-0 cursor-pointer [background:url(./theme.svg)_left_center/cover_no-repeat] dark:invert dark:[background-position:right]"
+    ></a>
+  </div>
+
+  <a
+    class="btn-menu relative z-50 -mr-8 flex h-[5rem] w-[5rem] shrink-0 cursor-pointer flex-col items-center justify-center gap-2.5 lg:hidden"
+  ></a>
+
+  
+  <script>
+    
+    const htmlClass = document.documentElement.classList;
+    setTimeout(() => {
+      htmlClass.remove('not-ready');
+    }, 10);
+
+    
+    const btnMenu = document.querySelector('.btn-menu');
+    btnMenu.addEventListener('click', () => {
+      htmlClass.toggle('open');
+    });
+
+    
+    const metaTheme = document.querySelector('meta[name="theme-color"]');
+    const lightBg = `"#fff"`.replace(/"/g, '');
+    const setDark = (isDark) => {
+      metaTheme.setAttribute('content', isDark ? '#000' : lightBg);
+      htmlClass[isDark ? 'add' : 'remove']('dark');
+      localStorage.setItem('dark', isDark);
+    };
+
+    
+    const darkScheme = window.matchMedia('(prefers-color-scheme: dark)');
+    const darkVal = localStorage.getItem('dark');
+    setDark(darkVal ? darkVal === 'true' : darkScheme.matches);
+
+    
+    darkScheme.addEventListener('change', (event) => {
+      setDark(event.matches);
+    });
+
+    
+    const btnDark = document.querySelector('.btn-dark');
+    btnDark.addEventListener('click', () => {
+      setDark(localStorage.getItem('dark') !== 'true');
+    });
+  </script>
+
+  <div
+    class="nav-wrapper fixed inset-x-0 top-full z-40 flex h-full select-none flex-col justify-center pb-16 duration-200 dark:bg-black lg:static lg:h-auto lg:flex-row lg:!bg-transparent lg:pb-0 lg:transition-none"
+  >
+    
+    
+
+    
+    <nav
+      class="mt-12 flex justify-center space-x-10 dark:invert lg:mt-0 lg:ml-12 lg:items-center lg:space-x-6"
+    >
+      
+      <a
+        class="h-8 w-8 [background:var(--url)_center_center/cover_no-repeat] lg:h-6 lg:w-6"
+        style="--url: url(./twitter.svg)"
+        href=" https://twitter.com/0x4nz0 "
+        target="_blank"
+      ></a>
+      
+      <a
+        class="h-8 w-8 [background:var(--url)_center_center/cover_no-repeat] lg:h-6 lg:w-6"
+        style="--url: url(./github.svg)"
+        href=" https://github.com/0x4nz0 "
+        target="_blank"
+      ></a>
+      
+      <a
+        class="h-8 w-8 [background:var(--url)_center_center/cover_no-repeat] lg:h-6 lg:w-6"
+        style="--url: url(./rss.svg)"
+        href=" https://0x4nz0.github.io/index.xml "
+        target="_blank"
+      ></a>
+      
+    </nav>
+    
+  </div>
+</header>
+
+
+    <main
+      class="prose prose-neutral relative mx-auto min-h-[calc(100%-10rem)] max-w-3xl px-8 pt-20 pb-32 dark:prose-invert"
+    >
+      
+
+<article>
+  <header class="mb-20">
+    <h1 class="!my-0 pb-2.5">Uniswap V1 Smart Contract Breakdown</h1>
+
+    
+    <div class="text-sm opacity-60">
+      
+      <time>Sep 26, 2022</time>
+      
+      
+      <span class="mx-1">&middot;</span>
+      <span>0x4nz0</span>
+      
+    </div>
+    
+  </header>
+
+  <section><p>On the one hand, you have an introduction to basic concepts and an overview of the <em>Uniswap Protocol</em>.</p>
+<p>And, on the other hand, you have a smart contract breakdown along with a graphical guide for understanding the main functions of the <em>Uniswap Protocol</em>. For example, how the price works and how the liquidity pools work.</p>
+<p><strong>NOTE</strong>: The following article brings together all the notes that I have been collecting from various sources to understand how <em>Uniswap</em> works in its first version.
+If the article isn&rsquo;t enough for you, I recommend going down the rabbit hole with the sources mentioned.</p>
+<h2 id="what-is-uniswap">What Is Uniswap?</h2>
+<h3 id="basic-concepts">Basic Concepts</h3>
+<p><strong>Descentralized Exchanges</strong>: allow its users to mantain control of their funds, users don&rsquo;t give up control of their private keys and, their orders are executed on a blockchain.<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup></p>
+<p><strong>Centralized Exchanges</strong>: coordinate the funds of its users, users don&rsquo;t retain the control of their private keys and, their orders are logged on an internal database.<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup></p>
+<p><strong>Traditional Exchanges</strong>: use a central limit order book, a list of buy and sell orders for different assets consisting of volumes and prices.
+And, they directly match up buyers and sellers and announce current market prices based on the last price an asset sells for.<sup id="fnref:2"><a href="#fn:2" class="footnote-ref" role="doc-noteref">2</a></sup></p>
+<p><strong>Automated Market Maker</strong>: is a general concept that embraces different market maker algorithms.<sup id="fnref:3"><a href="#fn:3" class="footnote-ref" role="doc-noteref">3</a></sup></p>
+<blockquote>
+<p>A <em>Constant Product Market Maker</em> is a class of <em>Automated Market Maker</em>.<sup id="fnref:3"><a href="#fn:3" class="footnote-ref" role="doc-noteref">3</a></sup></p>
+</blockquote>
+<p><strong>Constant Product Market Maker</strong>: is a type of decentralized exchange protocol that establish a pre-defined set of prices based on the available quantities of two or more assets based on a <strong>constant function</strong> and, it allows anyone to provide liquidity to the markets.<sup id="fnref:3"><a href="#fn:3" class="footnote-ref" role="doc-noteref">3</a></sup><sup id="fnref:4"><a href="#fn:4" class="footnote-ref" role="doc-noteref">4</a></sup></p>
+<blockquote>
+<p>The term <em><strong>constant function</strong></em> refers to the fact that any trade must change the reserves in such a way that the product of those reserves remains unchanged.<sup id="fnref:3"><a href="#fn:3" class="footnote-ref" role="doc-noteref">3</a></sup></p>
+</blockquote>
+<h3 id="the-uniswap-protocol">The Uniswap Protocol</h3>
+<p>The <strong>Uniswap Protocol</strong> to serve as an alternative to <em>Centralized Exchanges</em> it must have liquidity, because whitout liquidity trades are not possible.<sup id="fnref:5"><a href="#fn:5" class="footnote-ref" role="doc-noteref">5</a></sup></p>
+<p>There are two ways to get liquidity:</p>
+<ol>
+<li>Developers must put their own money or money of their investors to become <em>market makers</em></li>
+<li>Allow any user to be a <em>market maker</em></li>
+</ol>
+<p>The first option is not practical because they would be the only <em>market makers</em> and this would make the DEX centralized.
+In adition, they would need to provide liquidity for all pairs, they would need a lot of money.<sup id="fnref:5"><a href="#fn:5" class="footnote-ref" role="doc-noteref">5</a></sup></p>
+<p>The second option is what makes the <em>Uniswap Protocol</em> an <em>Automated Market Maker</em>, because any user can provide their funds as liquidity to a trading pair and benefit from it.<sup id="fnref:5"><a href="#fn:5" class="footnote-ref" role="doc-noteref">5</a></sup></p>
+<p>Unlike <em>Traditional Exchanges</em>, the <em>Uniswap Protocol</em> does not have a centralized matchmaker.
+In other words, traders trade against a pool of assets, there is no need to have another trader to make a trade.<sup id="fnref:3"><a href="#fn:3" class="footnote-ref" role="doc-noteref">3</a></sup></p>
+<p>In short:</p>
+<p>The <strong>Uniswap Protocol</strong> is a <em>Descentralized Exchange</em> that implements an <em>Automated Market Maker</em> design, which is a <em>Constant Product Market Maker</em>, that allows its users to interact with a smart contract whose liquidity is provided by other users and, satisfies the following constant function:</p>
+<center>$x * y = k$</center>
+<h2 id="how-does-uniswap-v1-works">How Does Uniswap V1 Works?</h2>
+<blockquote>
+<p>The <strong>Uniswap Protocol</strong>: A suite of persistent, non-upgradable smart contracts that together create an automated market maker, a protocol that facilitates peer-to-peer market making and swapping of ERC-20 tokens on the Ethereum blockchain.<sup id="fnref:6"><a href="#fn:6" class="footnote-ref" role="doc-noteref">6</a></sup></p>
+</blockquote>
+<h3 id="price-function">Price Function</h3>
+<p>A <strong>Constant Product Market Maker</strong> satisfies the following constant function:</p>
+<center>$x * y = k$</center>
+<p>Where <em>x</em> is ETH reserve, <em>y</em> is ERC20 token reserve (or vice versa), and <em>k</em> is a constant.<sup id="fnref:5"><a href="#fn:5" class="footnote-ref" role="doc-noteref">5</a></sup>
+Trading any amount of either asset must change the reserves in such a way that their product remains equal to the constant <em>k</em>.<sup id="fnref:3"><a href="#fn:3" class="footnote-ref" role="doc-noteref">3</a></sup></p>
+<p>Every trade increases a reserve of either ETH or ERC20 token and, decreases a reserve of either ETH or ERC20 token.<sup id="fnref:5"><a href="#fn:5" class="footnote-ref" role="doc-noteref">5</a></sup></p>
+<center>$ (x + \Delta x)*(y - \Delta y) = x * y $</center>
+<p>Where $\Delta x$ is the amount of ETH or ERC20 tokens we&rsquo;re trading for $\Delta y$, amount of ERC20 tokens or ETH we&rsquo;re getting in exchange.<sup id="fnref:5"><a href="#fn:5" class="footnote-ref" role="doc-noteref">5</a></sup></p>
+<p>The pricing function is as follows:</p>
+<center>$ \Delta y = \frac{y * \Delta x} {x + \Delta x} $</center>
+<p>The <em>Uniswap Protocol</em> uses this price function to ensure that after each trade <em>k</em> remains the same.<sup id="fnref:5"><a href="#fn:5" class="footnote-ref" role="doc-noteref">5</a></sup></p>
+<p>This <em>constant product function</em> forms a hyperbola when plotting two assets, which has a desirable property of always having liquidity as prices approach infinity on both sides of the spectrum.<sup id="fnref:3"><a href="#fn:3" class="footnote-ref" role="doc-noteref">3</a></sup></p>
+<blockquote>
+<p>This makes reserves infinite and, this is the mechanism that protects pools from being drained.<sup id="fnref:5"><a href="#fn:5" class="footnote-ref" role="doc-noteref">5</a></sup></p>
+</blockquote>
+<center><figure><img src="/img/uniswap-v1/constant-product-formula.png"/>
+</figure>
+</center>
+<p>But this <em>constant product function</em> has a drawback, it causes price slippage, in which an user receives a different trade execution price than intended.<sup id="fnref:7"><a href="#fn:7" class="footnote-ref" role="doc-noteref">7</a></sup>
+The bigger the ammount of tokens traded in relative to reserves, the lower the price would be.<sup id="fnref:5"><a href="#fn:5" class="footnote-ref" role="doc-noteref">5</a></sup></p>
+<p>In the other hand, a <strong>Constant Sum Market Maker</strong> satisfies the following constant function:</p>
+<center>$x + y = k$</center>
+<p>This <em>constant sum function</em> forms a straight line, it crosses x and y, which means it allows 0 in anye of them.<sup id="fnref:5"><a href="#fn:5" class="footnote-ref" role="doc-noteref">5</a></sup></p>
+<center><figure><img src="/img/uniswap-v1/constant-sum-formula.png"/>
+</figure>
+</center>
+<p>While this function produces <em>zero slippage</em>, it does not provide infinite liquidity and therefore an arbitrageur is likely to drain one of the reserves.</p>
+<p>In short, the <em>Uniswap Protocol</em> uses a <em>constant product function</em>, as a price function, to calculate exchange rates.</p>
+<h3 id="overview-of-uniswaps-contracts">Overview of Uniswap&rsquo;s Contracts</h3>
+<p>There are two different types of contracts:</p>
+<ul>
+<li><strong>Factory</strong>: it creates new Exchange contracts, serves as a public registry and is used to look up all token and exchange addresses added to the system.<sup id="fnref:8"><a href="#fn:8" class="footnote-ref" role="doc-noteref">8</a></sup></li>
+<li><strong>Exchange</strong>: it holds reserves of both ETH and its associated ERC20 token and, allows anyone to become a liquidity provider and benefit from it by contributing to its reserves.<sup id="fnref:8"><a href="#fn:8" class="footnote-ref" role="doc-noteref">8</a></sup></li>
+</ul>
+<center><figure><img src="/img/uniswap-v1/overview.png"/>
+</figure>
+</center>
+<h3 id="providing-liquidity">Providing Liquidity</h3>
+<h4 id="adding-liquidity">Adding Liquidity</h4>
+<p>Anyone can become a liquidity provider on an exchange and contribute to its reserves.
+It requires depositing an equivalent value of both ETH and the relevant ERC20 token.<sup id="fnref:8"><a href="#fn:8" class="footnote-ref" role="doc-noteref">8</a></sup></p>
+<center><figure><img src="/img/uniswap-v1/add-liquidity.png"/>
+</figure>
+</center>
+<p>Each <em>Exchange</em> contract is used to pool both Ether and a specific ERC20.<sup id="fnref:9"><a href="#fn:9" class="footnote-ref" role="doc-noteref">9</a></sup></p>
+<h4 id="liquidity-tokens">Liquidity Tokens</h4>
+<p>An internal &ldquo;pool token&rdquo; (ERC20) is minted when liquidity is deposited into the system and, can be burned at any time to withdraw a proportional share of the reserves.<sup id="fnref:8"><a href="#fn:8" class="footnote-ref" role="doc-noteref">8</a></sup></p>
+<h4 id="removing-liquidity">Removing Liquidity</h4>
+<p><em>Liquidity Providers</em> can burn their <em>Liquidity Tokens</em> at any time to withdraw their proportional share of ETH and ERC20 tokens from the pools.</p>
+<center><figure><img src="/img/uniswap-v1/remove-liquidity.png"/>
+</figure>
+</center>
+<p>ETH and ERC20 tokens are withdrawn at the current exchange rate, not the ratio of their original investment. This means some value can be lost from market fluctuations.<sup id="fnref:10"><a href="#fn:10" class="footnote-ref" role="doc-noteref">10</a></sup></p>
+<p>That is called <em>Impermanent Loss</em>, the divergence in price between the time liquidity is deposited and withdrawn.<sup id="fnref:11"><a href="#fn:11" class="footnote-ref" role="doc-noteref">11</a></sup></p>
+<h3 id="swaps">Swaps</h3>
+<h4 id="fees">Fees</h4>
+<p><em>Liquidity Providers</em> have to be incentivized, otherwhise they would not benefit from providing liquidity.
+In order to incentivize them, there is a 0.3% fee for swapping between ETH and ERC20 tokens (ETH $ \leftrightarrows $ ERC20 Trades).</p>
+<p>The fee is split by liquidity providers proportional to their contribution, and are immediately deposited into liquidity reserves whitout minting new <em>Liquidity Tokens</em>.<sup id="fnref:10"><a href="#fn:10" class="footnote-ref" role="doc-noteref">10</a></sup></p>
+<h4 id="eth--leftrightarrows--erc20-trades">ETH $ \leftrightarrows $ ERC20 Trades</h4>
+<p>There are two possible swaps:</p>
+<ul>
+<li><strong>ETH $ \rightarrow $ ERC20 Token</strong>: when trading ETH for an ERC20 token, ETH is sent to the contract&rsquo;s pool and the ERC20 token is given back to the user.<sup id="fnref:9"><a href="#fn:9" class="footnote-ref" role="doc-noteref">9</a></sup></li>
+</ul>
+<center><figure><img src="/img/uniswap-v1/eth-to-erc20.png"/>
+</figure>
+</center>
+<ul>
+<li><strong>ERC20 Token $ \rightarrow $ ETH</strong>: when trading an ERC20 token for ETH, the ERC20 is transferred from the user&rsquo;s balance to the contract&rsquo;s balance and ETH is given back to the user.</li>
+</ul>
+<center><figure><img src="/img/uniswap-v1/erc20-to-eth.png"/>
+</figure>
+</center>
+<p>The amount that is returned from swapping is based on a constant product function which automatically adjusts prices based off the relative sizes of the two reserves and the size ot the incoming trade.<sup id="fnref:12"><a href="#fn:12" class="footnote-ref" role="doc-noteref">12</a></sup></p>
+<h4 id="erc20--leftrightarrows--erc20-trades">ERC20 $ \leftrightarrows $ ERC20 Trades</h4>
+<p>Since ETH is used as a common pair for all ERC20 tokens, it can be used as an intermediary for direct ERC20 to ERC20 swaps.</p>
+<ul>
+<li><strong>ERC20 Token A $ \rightarrow $ ETH, ETH $ \rightarrow $ ERC20 Token B</strong>: it is possible to convert ERC20 token A to ETH on one exchange and then from ETH to ERC20 token B on another within a single transaction.<sup id="fnref:10"><a href="#fn:10" class="footnote-ref" role="doc-noteref">10</a></sup></li>
+</ul>
+<center><figure><img src="/img/uniswap-v1/erc20-to-erc20.png"/>
+</figure>
+</center>
+<p>Since ERC20 to ERC20 trades include both an ERC20 to ETH swap and an ETH to ERC20 swap, the fee is paid on both exchanges.<sup id="fnref:10"><a href="#fn:10" class="footnote-ref" role="doc-noteref">10</a></sup></p>
+<h2 id="uniswap-v1-smart-contract-breakdown">Uniswap V1 Smart Contract Breakdown</h2>
+<p>Although <a href="https://github.com/Uniswap/v1-contracts">the core contracts</a> of the <em>Uniswap Protocol</em> are written in Vyper, the code below is based on the following articles by Jeiwan:</p>
+<ul>
+<li><a href="https://jeiwan.net/posts/programming-defi-uniswap-1/">Programming DeFi: Uniswap. Part 1</a></li>
+<li><a href="https://jeiwan.net/posts/programming-defi-uniswap-2/">Programming DeFi: Uniswap. Part 2</a></li>
+<li><a href="https://jeiwan.net/posts/programming-defi-uniswap-1/">Programming DeFi: Uniswap. Part 3</a></li>
+</ul>
+<p><strong>NOTE</strong>: Instead of using the ERC20 contract from OpenZeppelin, here I&rsquo;m using the ERC20 contract from solmate.
+And, instead of using Hardhat for contract developing and testing, I’ll be using Foundry.</p>
+<h3 id="factory">Factory</h3>
+<blockquote>
+<p>The <em>Factory Contract</em> can be used to create <em>Exchange Contracts</em> for any ERC20 token that does not already have one.</p>
+</blockquote>
+<ul>
+<li><strong>createExchange</strong>: create, deploy and register an <em>Exchange Contract</em> by taking an ERC20 token address.</li>
+</ul>
+<blockquote>
+<p>And, it also functions as a registry of ERC20 tokens that have been added to the system, and the <em>Exchange</em> with which they are associated.<sup id="fnref:13"><a href="#fn:13" class="footnote-ref" role="doc-noteref">13</a></sup></p>
+</blockquote>
+<ul>
+<li><strong>tokenToExchange</strong>: data structure to store exchanges.</li>
+<li><strong>getExchange</strong>: find the <em>Exchange</em> address associated with an ERC20 token address.</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-solidity" data-lang="solidity"><span style="color:#66d9ef">contract</span> <span style="color:#a6e22e">Factory</span> {
+    <span style="color:#66d9ef">mapping</span>(<span style="color:#66d9ef">address</span> <span style="color:#f92672">=&gt;</span> <span style="color:#66d9ef">address</span>) <span style="color:#66d9ef">public</span> tokenToExchange;
+
+    <span style="color:#66d9ef">function</span> <span style="color:#a6e22e">createExchange</span>(<span style="color:#66d9ef">address</span> _tokenAddress) <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">returns</span> (<span style="color:#66d9ef">address</span>) {
+        require(_tokenAddress <span style="color:#f92672">!=</span> <span style="color:#66d9ef">address</span>(<span style="color:#ae81ff">0</span>), <span style="color:#e6db74">&#34;invalid token address&#34;</span>);
+        require(tokenToExchange[_tokenAddress] <span style="color:#f92672">==</span> <span style="color:#66d9ef">address</span>(<span style="color:#ae81ff">0</span>), <span style="color:#e6db74">&#34;exchange already exists&#34;</span>);
+
+        Exchange exchange <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> Exchange(_tokenAddress);
+        tokenToExchange[_tokenAddress] <span style="color:#f92672">=</span> <span style="color:#66d9ef">address</span>(exchange);
+
+        <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">address</span>(exchange);
+    }
+
+    <span style="color:#66d9ef">function</span> <span style="color:#a6e22e">getExchange</span>(<span style="color:#66d9ef">address</span> _tokenAddress) <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">view</span> <span style="color:#66d9ef">returns</span> (<span style="color:#66d9ef">address</span>) {
+        <span style="color:#66d9ef">return</span> tokenToExchange[_tokenAddress];
+    }
+}</code></pre></div>
+<h3 id="exchange">Exchange</h3>
+<p>There is a separate <em>Exchange Contract</em> for every ERC20 token.<sup id="fnref:13"><a href="#fn:13" class="footnote-ref" role="doc-noteref">13</a></sup></p>
+<h4 id="constructor">Constructor</h4>
+<blockquote>
+<p>It holds reserves of both ETH and its associated ERC20 token.</p>
+</blockquote>
+<p>Any ETH sent or withdrawn is updated to the <em>Exchange</em> contract balance, and any ERC20 token sent or withdrawn is updated to the ERC20 token contract balance.</p>
+<ul>
+<li><strong>tokenAddress</strong>: address of the ERC20 token traded on this <em>Exchange Contract</em>.</li>
+<li><strong>getReserve</strong>: it returns the ERC20 token balance of an exchange.</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-solidity" data-lang="solidity"><span style="color:#66d9ef">contract</span> <span style="color:#a6e22e">Exchange</span> {
+    <span style="color:#66d9ef">address</span> <span style="color:#66d9ef">public</span> tokenAddress;
+
+    <span style="color:#66d9ef">constructor</span>(<span style="color:#66d9ef">address</span> _token) {
+        require(_token <span style="color:#f92672">!=</span> <span style="color:#66d9ef">address</span>(<span style="color:#ae81ff">0</span>), <span style="color:#e6db74">&#34;invalid token address&#34;</span>);
+
+        tokenAddress <span style="color:#f92672">=</span> _token;
+    }
+}</code></pre></div>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-solidity" data-lang="solidity"><span style="color:#66d9ef">function</span> <span style="color:#a6e22e">getReserve</span>() <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">view</span> <span style="color:#66d9ef">returns</span> (<span style="color:#66d9ef">uint256</span>) {
+    <span style="color:#66d9ef">return</span> IERC20(tokenAddress).balanceOf(<span style="color:#66d9ef">address</span>(this));
+}</code></pre></div>
+<h4 id="providing-liquidity-1">Providing Liquidity</h4>
+<blockquote>
+<p>It allows anyone to become a liquidity provider and benefit from it by contributing to its reserves.</p>
+</blockquote>
+<h5 id="adding-liquidity-1">Adding Liquidity</h5>
+<blockquote>
+<p>It requires depositing an equivalent value of both ETH and the relevant ERC20 token.<sup id="fnref:8"><a href="#fn:8" class="footnote-ref" role="doc-noteref">8</a></sup></p>
+</blockquote>
+<ul>
+<li><strong>reserves are empty</strong>: the first <em>Liquidity Provider</em> to join a pool sets the initial exchange rate by depositing what they believe to be an equivalent value of ETH and ERC20 tokens.<sup id="fnref:10"><a href="#fn:10" class="footnote-ref" role="doc-noteref">10</a></sup>
+And, the amount of <em>Liquidity Tokens</em> issued equals to the amount of ETH deposited.<sup id="fnref:14"><a href="#fn:14" class="footnote-ref" role="doc-noteref">14</a></sup></li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-solidity" data-lang="solidity"><span style="color:#66d9ef">function</span> <span style="color:#a6e22e">addLiquidity</span>(<span style="color:#66d9ef">uint256</span> _tokenAmount) <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">payable</span> <span style="color:#66d9ef">returns</span> (<span style="color:#66d9ef">uint256</span>) {
+    <span style="color:#66d9ef">if</span> (getReserve() <span style="color:#f92672">==</span> <span style="color:#ae81ff">0</span>) {
+        IERC20 token <span style="color:#f92672">=</span> IERC20(tokenAddress);
+        token.transferFrom(msg.sender, <span style="color:#66d9ef">address</span>(this), _tokenAmount);
+
+        <span style="color:#66d9ef">uint256</span> liquidity <span style="color:#f92672">=</span> <span style="color:#66d9ef">address</span>(this).balance;
+        _mint(msg.sender, liquidity);
+
+        <span style="color:#66d9ef">return</span> liquidity;
+    } <span style="color:#66d9ef">else</span> {
+        <span style="color:#75715e">// omitted
+</span><span style="color:#75715e"></span>    }
+}</code></pre></div>
+<ul>
+<li><strong>reserves are not empty</strong>: all future <em>Liquidity Providers</em> deposit ETH and ERC20’s using the exchange rate at the moment of their deposit.<sup id="fnref:10"><a href="#fn:10" class="footnote-ref" role="doc-noteref">10</a></sup>
+And, the amount of <em>Liquidity Tokens</em> issued is proportional to the amount of ETH deposited.<sup id="fnref:14"><a href="#fn:14" class="footnote-ref" role="doc-noteref">14</a></sup></li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-solidity" data-lang="solidity"><span style="color:#66d9ef">function</span> <span style="color:#a6e22e">addLiquidity</span>(<span style="color:#66d9ef">uint256</span> _tokenAmount) <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">payable</span> <span style="color:#66d9ef">returns</span> (<span style="color:#66d9ef">uint256</span>) {
+    <span style="color:#66d9ef">if</span> (getReserve() <span style="color:#f92672">==</span> <span style="color:#ae81ff">0</span>) {
+        <span style="color:#75715e">// omitted
+</span><span style="color:#75715e"></span>    } <span style="color:#66d9ef">else</span> {
+        <span style="color:#66d9ef">uint256</span> ethReserve <span style="color:#f92672">=</span> <span style="color:#66d9ef">address</span>(this).balance <span style="color:#f92672">-</span> msg.value;
+        <span style="color:#66d9ef">uint256</span> tokenReserve <span style="color:#f92672">=</span> getReserve();
+        <span style="color:#66d9ef">uint256</span> tokenAmount <span style="color:#f92672">=</span> (msg.value <span style="color:#f92672">*</span> tokenReserve) <span style="color:#f92672">/</span> ethReserve;
+        require(_tokenAmount <span style="color:#f92672">&gt;=</span> tokenAmount, <span style="color:#e6db74">&#34;insufficient token amount&#34;</span>);
+
+        IERC20 token <span style="color:#f92672">=</span> IERC20(tokenAddress);
+        token.transferFrom(msg.sender, <span style="color:#66d9ef">address</span>(this), tokenAmount);
+
+        <span style="color:#66d9ef">uint256</span> liquidity <span style="color:#f92672">=</span> (IERC20(<span style="color:#66d9ef">address</span>(this)).totalSupply() <span style="color:#f92672">*</span> msg.value) <span style="color:#f92672">/</span> ethReserve;
+        _mint(msg.sender, liquidity);
+
+        <span style="color:#66d9ef">return</span> liquidity;
+    }
+}</code></pre></div>
+<blockquote>
+<p><em>Liquidity Providers</em> must deposit at the current exchange rate to satisfy the <em>constant product function</em>.<sup id="fnref:15"><a href="#fn:15" class="footnote-ref" role="doc-noteref">15</a></sup></p>
+</blockquote>
+<ul>
+<li><strong>tokenAmount</strong>: depositing ETH into reserves requires depositing an equivalent value of ERC20 tokens as well.<sup id="fnref:10"><a href="#fn:10" class="footnote-ref" role="doc-noteref">10</a></sup>
+And, this is calculated with the equation:</li>
+</ul>
+<center>$ tokensDeposited = tokenPool * \frac{ethDeposited} {ethPool} $</center>
+<blockquote>
+<p>The exchange rate can change between when a transaction is signed and when it is executed on Ethereum.<sup id="fnref:15"><a href="#fn:15" class="footnote-ref" role="doc-noteref">15</a></sup></p>
+</blockquote>
+<ul>
+<li><strong>require(_tokenAmount &gt;= tokenAmount)</strong>: <em>_tokenAmount</em> is used to bound the amount the exchange rate can fluctuate.</li>
+</ul>
+<blockquote>
+<p>Liquidity tokens are minted to track the relative proportion of total reserves that each liquidity provider has contributed.<sup id="fnref:15"><a href="#fn:15" class="footnote-ref" role="doc-noteref">15</a></sup></p>
+</blockquote>
+<ul>
+<li><strong>liquidity</strong>: the number of liquidity tokens minted is determined by the amount of ETH sent to the function.<sup id="fnref:10"><a href="#fn:10" class="footnote-ref" role="doc-noteref">10</a></sup>
+And, this is calculated with the equation:</li>
+</ul>
+<center>$ amountMinted = totalAmount * \frac{ethDeposited} {ethPool} $</center>
+<h5 id="liquidity-tokens-1">Liquidity Tokens</h5>
+<blockquote>
+<p>An internal &ldquo;pool token&rdquo; (ERC20) is used to track each providers relative contribution.<sup id="fnref:8"><a href="#fn:8" class="footnote-ref" role="doc-noteref">8</a></sup></p>
+</blockquote>
+<ul>
+<li><strong>is ERC20</strong>: this <em>Exchange Contract</em> is an ERC20 token.</li>
+<li><strong>ERC20(&ldquo;Uniswap-V1&rdquo;, &ldquo;UNI-V1&rdquo;, 18)</strong>: create this <em>Exchange Contract</em> as a <em>Liquidity Token</em>.</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-solidity" data-lang="solidity"><span style="color:#66d9ef">contract</span> <span style="color:#a6e22e">Exchange</span> <span style="color:#66d9ef">is</span> ERC20 {
+    <span style="color:#75715e">// omitted
+</span><span style="color:#75715e"></span>    <span style="color:#66d9ef">constructor</span>(<span style="color:#66d9ef">address</span> _token) ERC20(<span style="color:#e6db74">&#34;Uniswap-V1&#34;</span>, <span style="color:#e6db74">&#34;UNI-V1&#34;</span>, <span style="color:#ae81ff">18</span>) {
+        <span style="color:#75715e">// omitted   
+</span><span style="color:#75715e"></span>    }
+}</code></pre></div>
+<h5 id="removing-liquidity-1">Removing Liquidity</h5>
+<blockquote>
+<p><em>Liquidity Providers</em> can burn their Liquidity Tokens at any time to withdraw their proportional share of ETH and ERC20 tokens from the pools.</p>
+</blockquote>
+<ul>
+<li><strong>ethAmount</strong>: the amount of ETH withdrawn can be calculated using the equation:</li>
+</ul>
+<center>$ ethWithdrawn = ethPool * \frac{amountBurned} {totalAmount} $</center>
+<ul>
+<li><strong>tokenAmount</strong>: the amount of ERC20 tokens withdrawn can be calculated using the equation:</li>
+</ul>
+<center>$ tokensWithdrawn = tokenPool * \frac{amountBurned} {totalAmount} $</center>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-solidity" data-lang="solidity"><span style="color:#66d9ef">function</span> <span style="color:#a6e22e">removeLiquidity</span>(<span style="color:#66d9ef">uint256</span> _amount) <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">returns</span> (<span style="color:#66d9ef">uint256</span>, <span style="color:#66d9ef">uint256</span>) {
+    require(_amount <span style="color:#f92672">&gt;</span> <span style="color:#ae81ff">0</span>, <span style="color:#e6db74">&#34;invalid amount&#34;</span>);
+
+    <span style="color:#66d9ef">uint256</span> ethAmount <span style="color:#f92672">=</span> (<span style="color:#66d9ef">address</span>(this).balance <span style="color:#f92672">*</span> _amount) <span style="color:#f92672">/</span> IERC20(<span style="color:#66d9ef">address</span>(this)).totalSupply();
+    <span style="color:#66d9ef">uint256</span> tokenAmount <span style="color:#f92672">=</span> (getReserve() <span style="color:#f92672">*</span> _amount) <span style="color:#f92672">/</span> IERC20(<span style="color:#66d9ef">address</span>(this)).totalSupply();
+
+    _burn(msg.sender, _amount);
+    <span style="color:#66d9ef">payable</span>(msg.sender).transfer(ethAmount);
+    IERC20(tokenAddress).transfer(msg.sender, tokenAmount);
+
+    <span style="color:#66d9ef">return</span> (ethAmount, tokenAmount);
+}</code></pre></div>
+<h4 id="swaps-1">Swaps</h4>
+<p>It allows to exchange ETH to and from only one ERC20 token.<sup id="fnref:5"><a href="#fn:5" class="footnote-ref" role="doc-noteref">5</a></sup></p>
+<h5 id="price-function-1">Price Function</h5>
+<blockquote>
+<p>The <em>Uniswap Protocol</em> uses a constant product function, as a price function, to calculate exchange rates.</p>
+</blockquote>
+<ul>
+<li><strong>getAmount</strong>: function used in trades and returns the exchange rate. It respects input amount and ensures that after each trade <em>k</em> remains constant.</li>
+</ul>
+<center>$ \Delta y = \frac{\Delta x * y} {x + \Delta x} $</center>
+<ul>
+<li><strong>inputAmountWithFee</strong>: Jeiwan uses 1% as the fee.<sup id="fnref:14"><a href="#fn:14" class="footnote-ref" role="doc-noteref">14</a></sup></li>
+<li><strong>(inputReserve * 100)</strong>: <em>Solidity</em> does not support floating point division.</li>
+</ul>
+<center>$ amountWithFee = amount * \frac{100 - fee} {100}$</center>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-solidity" data-lang="solidity"><span style="color:#66d9ef">function</span> <span style="color:#a6e22e">getAmount</span>(<span style="color:#66d9ef">uint256</span> inputAmount, <span style="color:#66d9ef">uint256</span> inputReserve, <span style="color:#66d9ef">uint256</span> outputReserve)
+    <span style="color:#66d9ef">private</span>
+    <span style="color:#66d9ef">pure</span>
+    <span style="color:#66d9ef">returns</span> (<span style="color:#66d9ef">uint256</span>)
+{
+    require(inputReserve <span style="color:#f92672">&gt;</span> <span style="color:#ae81ff">0</span> <span style="color:#f92672">&amp;&amp;</span> outputReserve <span style="color:#f92672">&gt;</span> <span style="color:#ae81ff">0</span>, <span style="color:#e6db74">&#34;invalid reserves&#34;</span>);
+
+    <span style="color:#66d9ef">uint256</span> inputAmountWithFee <span style="color:#f92672">=</span> inputAmount <span style="color:#f92672">*</span> <span style="color:#ae81ff">99</span>;
+    <span style="color:#66d9ef">uint256</span> numerator <span style="color:#f92672">=</span> inputAmountWithFee <span style="color:#f92672">*</span> outputReserve;
+    <span style="color:#66d9ef">uint256</span> denominator <span style="color:#f92672">=</span> (inputReserve <span style="color:#f92672">*</span> <span style="color:#ae81ff">100</span>) <span style="color:#f92672">+</span> inputAmountWithFee;
+
+    <span style="color:#66d9ef">return</span> numerator <span style="color:#f92672">/</span> denominator;
+}</code></pre></div>
+<h5 id="eth--leftrightarrows--erc20-trades-1">ETH $ \leftrightarrows $ ERC20 Trades</h5>
+<blockquote>
+<p>When trading ETH for an ERC20 token, ETH is sent to the contract’s pool and the ERC20 token is given back to the user.<sup id="fnref:9"><a href="#fn:9" class="footnote-ref" role="doc-noteref">9</a></sup></p>
+</blockquote>
+<ul>
+<li><strong>ethToTokenSwap</strong>: <em>payable</em> function that receives ETH and adds it to the contract balance, and calls ethToToken.</li>
+<li><strong>ethToToken</strong>: it takes an address, <em>recipient</em>, to whom we want to send tokens. In this case, <em>recipient</em> is equal to <em>msg.sender</em>, the user.</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-solidity" data-lang="solidity"><span style="color:#66d9ef">function</span> <span style="color:#a6e22e">ethToToken</span>(<span style="color:#66d9ef">uint256</span> _minTokens, <span style="color:#66d9ef">address</span> recipient) <span style="color:#66d9ef">private</span> {
+    <span style="color:#66d9ef">uint256</span> tokenReserve <span style="color:#f92672">=</span> getReserve();
+    <span style="color:#66d9ef">uint256</span> tokensBought <span style="color:#f92672">=</span> getAmount(msg.value, <span style="color:#66d9ef">address</span>(this).balance <span style="color:#f92672">-</span> msg.value, tokenReserve);
+
+    require(tokensBought <span style="color:#f92672">&gt;=</span> _minTokens, <span style="color:#e6db74">&#34;insufficient output amount&#34;</span>);
+
+    IERC20(tokenAddress).transfer(recipient, tokensBought);
+}
+
+<span style="color:#66d9ef">function</span> <span style="color:#a6e22e">ethToTokenSwap</span>(<span style="color:#66d9ef">uint256</span> _minTokens) <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">payable</span> {
+    ethToToken(_minTokens, msg.sender);
+}</code></pre></div>
+<blockquote>
+<p>When trading an ERC20 token for ETH, the ERC20 is transferred from the user’s balance to the contract’s balance and ETH is given back to the user.</p>
+</blockquote>
+<ul>
+<li><strong>tokenToEthSwap</strong>: transfers tokens from the user&rsquo;s balance to the exchange&rsquo;s balance in exchange of ETH.</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-solidity" data-lang="solidity"><span style="color:#66d9ef">function</span> <span style="color:#a6e22e">tokenToEthSwap</span>(<span style="color:#66d9ef">uint256</span> _tokensSold, <span style="color:#66d9ef">uint256</span> _minEth) <span style="color:#66d9ef">public</span> {
+    <span style="color:#66d9ef">uint256</span> tokenReserve <span style="color:#f92672">=</span> getReserve();
+    <span style="color:#66d9ef">uint256</span> ethBought <span style="color:#f92672">=</span> getAmount(_tokensSold, tokenReserve, <span style="color:#66d9ef">address</span>(this).balance);
+
+    require(ethBought <span style="color:#f92672">&gt;=</span> _minEth, <span style="color:#e6db74">&#34;insufficient output amount&#34;</span>);
+
+    IERC20(tokenAddress).transferFrom(msg.sender, <span style="color:#66d9ef">address</span>(this), _tokensSold);
+    <span style="color:#66d9ef">payable</span>(msg.sender).transfer(ethBought);
+}</code></pre></div>
+<h5 id="erc20--leftrightarrows--erc20-trades-1">ERC20 $ \leftrightarrows $ ERC20 Trades</h5>
+<blockquote>
+<p>Every <em>Exchange</em> needs to know the address of the <em>Factory</em> to perform ERC20 $ \leftrightarrows $ ERC20 Trades.<sup id="fnref:16"><a href="#fn:16" class="footnote-ref" role="doc-noteref">16</a></sup></p>
+</blockquote>
+<ul>
+<li><strong>factoryAddress</strong>: address of the <em>Factory Contract</em> that created this <em>Exchange Contract</em>.</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-solidity" data-lang="solidity"><span style="color:#66d9ef">contract</span> <span style="color:#a6e22e">Exchange</span> <span style="color:#66d9ef">is</span> ERC20 {
+    <span style="color:#75715e">// omitted
+</span><span style="color:#75715e"></span>    <span style="color:#66d9ef">address</span> <span style="color:#66d9ef">public</span> factoryAddress;
+
+    <span style="color:#66d9ef">constructor</span>(<span style="color:#66d9ef">address</span> _token) ERC20(<span style="color:#e6db74">&#34;Uniswap-V1&#34;</span>, <span style="color:#e6db74">&#34;UNI-V1&#34;</span>, <span style="color:#ae81ff">18</span>) {
+        <span style="color:#75715e">// omitted
+</span><span style="color:#75715e"></span>        factoryAddress <span style="color:#f92672">=</span> msg.sender;
+    }
+}</code></pre></div>
+<blockquote>
+<p>It is possible to convert ERC20 token A to ETH on one exchange and then from ETH to ERC20 token B on another within a single transaction.<sup id="fnref:10"><a href="#fn:10" class="footnote-ref" role="doc-noteref">10</a></sup></p>
+</blockquote>
+<ul>
+<li><strong>tokenToTokenSwap</strong>: this <em>Exchange Contract A</em> finds another <em>Exchange Contract B</em> for the token address, and sends it ETH to swap them to tokens.</li>
+<li><strong>ethToTokenTransfer</strong>: <em>payable</em> function that receives ETH and adds it to the contract balance, and calls ethToToken.</li>
+<li><strong>ethToToken</strong>: it takes an address, <em>recipient</em>, to whom we want to send tokens. In this case, <em>recipient</em> is equal to <em>msg.sender</em>, the user and not the calling contract, <em>Exchange Contract A</em>.</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-solidity" data-lang="solidity"><span style="color:#66d9ef">function</span> <span style="color:#a6e22e">ethToTokenTransfer</span>(<span style="color:#66d9ef">uint256</span> _minTokens, <span style="color:#66d9ef">address</span> _recipient) <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">payable</span> {
+    ethToToken(_minTokens, _recipient);
+}
+
+<span style="color:#66d9ef">function</span> <span style="color:#a6e22e">tokenToTokenSwap</span>(<span style="color:#66d9ef">uint256</span> _tokenSold, <span style="color:#66d9ef">uint256</span> _minTokensBought, <span style="color:#66d9ef">address</span> _tokenAddress) <span style="color:#66d9ef">public</span> {
+    <span style="color:#66d9ef">address</span> exchangeAddress <span style="color:#f92672">=</span> IFactory(factoryAddress).getExchange(_tokenAddress);
+    require(exchangeAddress <span style="color:#f92672">!=</span> <span style="color:#66d9ef">address</span>(this) <span style="color:#f92672">&amp;&amp;</span> exchangeAddress <span style="color:#f92672">!=</span> <span style="color:#66d9ef">address</span>(<span style="color:#ae81ff">0</span>), <span style="color:#e6db74">&#34;invalid exchange address&#34;</span>);
+
+    <span style="color:#66d9ef">uint256</span> tokenReserve <span style="color:#f92672">=</span> getReserve();
+    <span style="color:#66d9ef">uint256</span> ethBought <span style="color:#f92672">=</span> getAmount(_tokenSold, tokenReserve, <span style="color:#66d9ef">address</span>(this).balance);
+
+    IERC20(tokenAddress).transferFrom(msg.sender, <span style="color:#66d9ef">address</span>(this), _tokenSold);
+
+    IExchange(exchangeAddress).ethToTokenTransfer{value<span style="color:#f92672">:</span> ethBought}(_minTokensBought, msg.sender);
+}</code></pre></div>
+<h2 id="testing-uniswap-v1-smart-contract-with-foundry">Testing Uniswap V1 Smart Contract With Foundry</h2>
+<p><strong>NOTE</strong>: The code of the following tests done with Foundry can be found in <a href="https://github.com/0x4nz0/uniswap-v1">this repository</a>.
+Since most of the <em>Uniswap Protocol</em> logic is in the <em>Exchange Contract</em>, I&rsquo;ll only explain how <em><strong>Exchange.t.sol</strong></em> is organized.</p>
+<p><strong>ExchangeBaseSetup</strong>: deploys a <em>Token, Factory, and Exchange Contract</em> and, defines an <em>owner</em> and an <em>user</em> address.
+It is used as a base setup for the following tests, except for <em>TokenToTokenSwapTest</em>.</p>
+<p><strong>DeploymentTest</strong>: tests if the deployment was successful.</p>
+<h3 id="providing-liquidity-2">Providing Liquidity</h3>
+<p>The <em>Liquidity Provider</em> can face two situations, the reserves are empty or the reserves are not empty.</p>
+<p><strong>AddLiquidityWithEmptyReservesTest</strong>: tests the <em>if branch</em> of <em>addLiquidity</em>, and whether the <em>Liquidity Tokens</em> are issued when liquidity is added.</p>
+<p><strong>AddLiquidityWithExistingReservesTest</strong>: tests the <em>else branch</em> of <em>addLiquidity</em>, and whether the <em>Liquidity Tokens</em> are issued when liquidity is added.</p>
+<p><strong>RemoveLiquidityTest</strong>: tests if the <em>Exchange Contract</em> allows to withdraw the proportional part of ETH and ERC20 tokens, and whether the <em>Liquidity Tokens</em> are burned when liquidity is removed.</p>
+<h3 id="swaps-2">Swaps</h3>
+<p><strong>EthToTokenSwapTest</strong> and <strong>TokenToEthSwapTest</strong> tests if the <em>Exchange Contract</em> allows to trade ETH to and from a single ERC20 token.</p>
+<p><strong>TokenToTokenSwapTest</strong>: its base setup deploys <em>two Tokens, a Factory, and two Exchanges</em> and, defines an owner and user address, also, it gives them a label to easily identify them.
+And, it tests if the <em>Exchange Contract</em> allows to directly swap an ERC20 to another ERC20 in a single transaction.</p>
+<h2 id="remarks">Remarks</h2>
+<p>The <a href="https://github.com/Uniswap/v1-contracts">core contracts</a> of the <em>Uniswap Protocol</em> are written in <em>Vyper</em> and, have differences from this version in <em>Solidity</em>.
+I&rsquo;ll highlight the most notable differences of the <em><strong>uniswap_exchange.vy</strong></em>:</p>
+<ul>
+<li>The <em>ERC20 Token Standard</em> is implemented directly, because Vyper does not provide <em>class inheritance</em>. However, <em>Vyper</em> provides a specific built-in interface for the <em>ERC20 Token Standard</em>, but it is not imported.</li>
+<li>The <em>deadline parameter</em> is used to set a time after which a transaction can no longer be executed. This limits the &ldquo;free option&rdquo; problem, where Ethereum miners can hold signed transactions and execute them based off market movements.<sup id="fnref:15"><a href="#fn:15" class="footnote-ref" role="doc-noteref">15</a></sup> But it is not used in this version for simplicity.</li>
+<li>Many of the helper functions to get the <em>input</em> and <em>output</em> amounts of ETH or ERC20 tokens have been coded directly or simplified with the <em>getAmount</em> function.</li>
+</ul>
+<section class="footnotes" role="doc-endnotes">
+<hr>
+<ol>
+<li id="fn:1" role="doc-endnote">
+<p><a href="https://www.coindesk.com/business/2021/02/04/what-is-uniswap-a-complete-beginners-guide/">https://www.coindesk.com/business/2021/02/04/what-is-uniswap-a-complete-beginners-guide/</a>&#160;<a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:2" role="doc-endnote">
+<p><a href="https://www.investopedia.com/terms/o/order-book.asp">https://www.investopedia.com/terms/o/order-book.asp</a>&#160;<a href="#fnref:2" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:3" role="doc-endnote">
+<p><a href="https://medium.com/bollinger-investment-group/constant-function-market-makers-defis-zero-to-one-innovation-968f77022159">https://medium.com/bollinger-investment-group/constant-function-market-makers-defis-zero-to-one-innovation-968f77022159</a>&#160;<a href="#fnref:3" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:4" role="doc-endnote">
+<p><a href="https://academy.binance.com/en/articles/what-is-an-automated-market-maker-amm">https://academy.binance.com/en/articles/what-is-an-automated-market-maker-amm</a>&#160;<a href="#fnref:4" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:5" role="doc-endnote">
+<p><a href="https://jeiwan.net/posts/programming-defi-uniswap-1/">https://jeiwan.net/posts/programming-defi-uniswap-1/</a>&#160;<a href="#fnref:5" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:6" role="doc-endnote">
+<p><a href="https://docs.uniswap.org/protocol/introduction">https://docs.uniswap.org/protocol/introduction</a>&#160;<a href="#fnref:6" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:7" role="doc-endnote">
+<p><a href="https://www.investopedia.com/terms/s/slippage.asp">https://www.investopedia.com/terms/s/slippage.asp</a>&#160;<a href="#fnref:7" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:8" role="doc-endnote">
+<p><a href="https://docs.uniswap.org/protocol/V1/introduction">https://docs.uniswap.org/protocol/V1/introduction</a>&#160;<a href="#fnref:8" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:9" role="doc-endnote">
+<p><a href="https://docs.ethhub.io/guides/graphical-guide-for-understanding-uniswap/">https://docs.ethhub.io/guides/graphical-guide-for-understanding-uniswap/</a>&#160;<a href="#fnref:9" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:10" role="doc-endnote">
+<p><a href="https://hackmd.io/@HaydenAdams/HJ9jLsfTz">https://hackmd.io/@HaydenAdams/HJ9jLsfTz</a>&#160;<a href="#fnref:10" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:11" role="doc-endnote">
+<p><a href="https://pintail.medium.com/uniswap-a-good-deal-for-liquidity-providers-104c0b6816f2">https://pintail.medium.com/uniswap-a-good-deal-for-liquidity-providers-104c0b6816f2</a>&#160;<a href="#fnref:11" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:12" role="doc-endnote">
+<p><a href="https://docs.uniswap.org/protocol/V1/guides/trade-tokens">https://docs.uniswap.org/protocol/V1/guides/trade-tokens</a>&#160;<a href="#fnref:12" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:13" role="doc-endnote">
+<p><a href="https://docs.uniswap.org/protocol/V1/guides/connect-to-uniswap">https://docs.uniswap.org/protocol/V1/guides/connect-to-uniswap</a>&#160;<a href="#fnref:13" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:14" role="doc-endnote">
+<p><a href="https://jeiwan.net/posts/programming-defi-uniswap-2/">https://jeiwan.net/posts/programming-defi-uniswap-2/</a>&#160;<a href="#fnref:14" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:15" role="doc-endnote">
+<p><a href="https://docs.uniswap.org/protocol/V1/guides/pool-liquidity">https://docs.uniswap.org/protocol/V1/guides/pool-liquidity</a>&#160;<a href="#fnref:15" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:16" role="doc-endnote">
+<p><a href="https://jeiwan.net/posts/programming-defi-uniswap-3/">https://jeiwan.net/posts/programming-defi-uniswap-3/</a>&#160;<a href="#fnref:16" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+</ol>
+</section>
+</section>
+
+  
+  
+
+  
+  
+  
+
+  
+  
+</article>
+
+
+    </main>
+
+    <footer class="opaco mx-auto flex h-[5rem] max-w-3xl items-center px-8 text-[0.9em] opacity-60">
+  <div class="mr-auto">
+    &copy; 2022
+    <a class="link" href="https://0x4nz0.github.io">0x4nz0</a>
+  </div>
+  <a class="link mx-6" href="https://gohugo.io/" rel="noopener" target="_blank">Powered by Hugo️️</a
+  >️
+  <a class="link" href="https://github.com/nanxiaobei/hugo-paper" rel="noopener" target="_blank"
+    >▷ Paper 6</a
+  >
+</footer>
+
+  </body>
+</html>
