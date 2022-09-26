@@ -151,7 +151,7 @@ NOTE: The following article brings together all the notes that I have been colle
 And, on the other hand, you have a smart contract breakdown along with a graphical guide for understanding the main functions of the Uniswap Protocol. For example, how the price works and how the liquidity pools work.
 NOTE: The following article brings together all the notes that I have been collecting from various sources to understand how Uniswap works in its first version."><meta itemprop="datePublished" content="2022-09-26T00:00:00+00:00" />
 <meta itemprop="dateModified" content="2022-09-26T00:00:00+00:00" />
-<meta itemprop="wordCount" content="3052">
+<meta itemprop="wordCount" content="3055">
 <meta itemprop="keywords" content="" />
   
   <meta name="twitter:card" content="summary"/>
@@ -282,7 +282,7 @@ NOTE: The following article brings together all the notes that I have been colle
   <section><p>On the one hand, you have an introduction to basic concepts and an overview of the <em>Uniswap Protocol</em>.</p>
 <p>And, on the other hand, you have a smart contract breakdown along with a graphical guide for understanding the main functions of the <em>Uniswap Protocol</em>. For example, how the price works and how the liquidity pools work.</p>
 <p><strong>NOTE</strong>: The following article brings together all the notes that I have been collecting from various sources to understand how <em>Uniswap</em> works in its first version.
-If the article isn&rsquo;t enough for you, I recommend going down the rabbit hole with the sources mentioned.</p>
+If the article isn&rsquo;t enough for you, I recommend going down the rabbit hole with the sources mentioned in the footnotes.</p>
 <h2 id="what-is-uniswap">What Is Uniswap?</h2>
 <h3 id="basic-concepts">Basic Concepts</h3>
 <p><strong>Descentralized Exchanges</strong>: allow its users to mantain control of their funds, users don&rsquo;t give up control of their private keys and, their orders are executed on a blockchain.<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup></p>
@@ -581,9 +581,11 @@ And, this is calculated with the equation:</li>
 <center>$ \Delta y = \frac{\Delta x * y} {x + \Delta x} $</center>
 <ul>
 <li><strong>inputAmountWithFee</strong>: Jeiwan uses 1% as the fee.<sup id="fnref:14"><a href="#fn:14" class="footnote-ref" role="doc-noteref">14</a></sup></li>
-<li><strong>(inputReserve * 100)</strong>: <em>Solidity</em> does not support floating point division.</li>
 </ul>
 <center>$ amountWithFee = amount * \frac{100 - fee} {100}$</center>
+<ul>
+<li><strong>(inputReserve * 100)</strong>: <em>Solidity</em> does not support floating point division.</li>
+</ul>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-solidity" data-lang="solidity"><span style="color:#66d9ef">function</span> <span style="color:#a6e22e">getAmount</span>(<span style="color:#66d9ef">uint256</span> inputAmount, <span style="color:#66d9ef">uint256</span> inputReserve, <span style="color:#66d9ef">uint256</span> outputReserve)
     <span style="color:#66d9ef">private</span>
     <span style="color:#66d9ef">pure</span>
